@@ -1,14 +1,14 @@
 import {
 	Logger,
-	MessageRecv,
+	MessageReceive,
 	MessageSend,
-	WebSocketController,
-} from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.2';
+	SignallingProtocol,
+} from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.5';
 
 /**
  * Auth Request Message Wrapper
  */
-export class MessageAuthRequest extends MessageSend {
+export class MessageAuthRequest extends MessageSend.MessageSend {
 	token: string;
 	provider: string;
 
@@ -37,7 +37,7 @@ export enum InstanceState {
 /**
  * Instance State Message wrapper
  */
-export class MessageInstanceState extends MessageRecv {
+export class MessageInstanceState extends MessageReceive.MessageRecv {
 	state: InstanceState;
 	details: string;
 	progress: number;
@@ -56,7 +56,7 @@ export enum MessageAuthResponseOutcomeType {
 /**
  * Authentication Response Message wrapper
  */
-export class MessageAuthResponse extends MessageRecv {
+export class MessageAuthResponse extends MessageReceive.MessageRecv {
 	outcome: MessageAuthResponseOutcomeType;
 	redirect: string;
 	error: string;
@@ -65,7 +65,7 @@ export class MessageAuthResponse extends MessageRecv {
 /**
  * Instance Request Message Wrapper
  */
-export class MessageRequestInstance extends MessageSend {
+export class MessageRequestInstance extends MessageSend.MessageSend {
 
 	// An opaque string representing optional configuration data to pass to the signalling server for instance customisation
 	data: string
@@ -85,36 +85,36 @@ export class SPSSignalling {
 	onInstanceStateChanged: (stateChangedMsg: string, isError: boolean) => void;
 	onAuthenticationResponse: (authRespMsg: string, isError: boolean) => void;
 
-	constructor(websocketController: WebSocketController) {
-		this.extendSignallingProtocol(websocketController);
+	constructor(signallingProtocol: SignallingProtocol) {
+		this.extendSignallingProtocol(signallingProtocol);
 	}
 
 	/**
 	 * Extend the signalling protocol with SPS specific messages.
 	 */
-	extendSignallingProtocol(webSocketController: WebSocketController) {
+	extendSignallingProtocol(signallingProtocol: SignallingProtocol) {
 
 		// authenticationRequired
-		webSocketController.signallingProtocol.addMessageHandler("authenticationRequired", (authReqPayload: string) => {
+		signallingProtocol.messageHandlers.addListener("authenticationRequired", (msg: MessageReceive.MessageRecv) => {
 			Logger.Log(Logger.GetStackTrace(), "AUTHENTICATION_REQUIRED", 6);
 			const url_string = window.location.href;
 			const url = new URL(url_string);
 			const authRequest = new MessageAuthRequest(url.searchParams.get("code"), url.searchParams.get("provider"));
-			webSocketController.webSocket.send(authRequest.payload());
+			signallingProtocol.sendMessage(authRequest);
 		});
 
 		// instanceState
-		webSocketController.signallingProtocol.addMessageHandler("instanceState", (instanceStatePayload: string) => {
+		signallingProtocol.messageHandlers.addListener("instanceState", (msg: MessageReceive.MessageRecv) => {
 			Logger.Log(Logger.GetStackTrace(), "INSTANCE_STATE", 6);
-			const instanceState: MessageInstanceState = JSON.parse(instanceStatePayload);
+			const instanceState: MessageInstanceState = msg as MessageInstanceState;
 			this.handleInstanceStateChanged(instanceState);
 		});
 
 		// authenticationResponse
-		webSocketController.signallingProtocol.addMessageHandler("authenticationResponse", (authRespPayload: string) => {
+		signallingProtocol.messageHandlers.addListener("authenticationResponse", (msg: MessageReceive.MessageRecv) => {
 			Logger.Log(Logger.GetStackTrace(), "AUTHENTICATION_RESPONSE", 6);
 
-			const authenticationResponse: MessageAuthResponse = JSON.parse(authRespPayload);
+			const authenticationResponse: MessageAuthResponse = msg as MessageAuthResponse;
 
 			this.handleAuthenticationResponse(authenticationResponse);
 
@@ -126,7 +126,7 @@ export class SPSSignalling {
 				case MessageAuthResponseOutcomeType.AUTHENTICATED: {
 					Logger.Log(Logger.GetStackTrace(), "User is authenticated and now requesting an instance", 6);
 
-					webSocketController.webSocket.send(new MessageRequestInstance().payload());
+					signallingProtocol.sendMessage(new MessageRequestInstance());
 					break;
 				}
 				case MessageAuthResponseOutcomeType.INVALID_TOKEN: {

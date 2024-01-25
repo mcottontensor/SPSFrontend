@@ -1,5 +1,5 @@
-import { Application, SettingUIFlag, UIOptions } from '@epicgames-ps/lib-pixelstreamingfrontend-ui-ue5.2';
-import { AggregatedStats, SettingFlag, TextParameters } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.2';
+import { Application, SettingUIFlag, UIOptions } from '@epicgames-ps/lib-pixelstreamingfrontend-ui-ue5.5';
+import { AggregatedStats, SettingFlag, TextParameters, PixelStreaming } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.5';
 import { LoadingOverlay } from './LoadingOverlay';
 import { SPSSignalling } from './SignallingExtension';
 import { MessageStats } from './Messages';
@@ -19,7 +19,7 @@ export class SPSApplication extends Application {
 
 	constructor(config: UIOptions) {
 		super(config);
-		this.signallingExtension = new SPSSignalling(this.stream.webSocketController);
+		this.signallingExtension = new SPSSignalling(this.stream.signallingProtocol);
 		this.signallingExtension.onAuthenticationResponse = this.handleSignallingResponse.bind(this);
 		this.signallingExtension.onInstanceStateChanged = this.handleSignallingResponse.bind(this);
 
@@ -91,7 +91,7 @@ export class SPSApplication extends Application {
 	 * @param stats - Aggregated Stats
 	 */
 	sendStatsToSignallingServer(stats: AggregatedStats) {
-		const data = new MessageStats(stats);
-		this.stream.webSocketController.webSocket.send(data.payload());
+		const message = new MessageStats(stats);
+		this.stream.signallingProtocol.sendMessage(message);
 	}
 }

@@ -6,8 +6,9 @@ import {
 	InboundAudioStats,
 	InboundVideoStats,
 	MessageSend,
+	MessageReceive,
 	OutBoundVideoStats
-} from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.2';
+} from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.5';
 
 export enum MessageSendTypes {
 	STATS = "stats",
@@ -16,7 +17,7 @@ export enum MessageSendTypes {
 /**
  * Aggregated Stats Message Wrapper
  */
-export class MessageStats extends MessageSend {
+export class MessageStats extends MessageSend.MessageSend {
 	inboundVideoStats: InboundVideoStats;
 	inboundAudioStats: InboundAudioStats;
 	candidatePair: CandidatePairStats
