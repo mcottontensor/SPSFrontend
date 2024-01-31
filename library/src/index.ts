@@ -20,8 +20,6 @@ export { EncoderSettings, InitialSettings, WebRTCSettings } from '@epicgames-ps/
 export { AggregatedStats } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.5';
 export { Logger } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.5';
 export { UnquantizedAndDenormalizeUnsigned } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.5';
-export { MessageSend } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.5';
-export { MessageReceive, MessageStreamerList } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.5';
 export { SignallingProtocol } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.5';
 export { CandidatePairStats } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.5';
 export { CandidateStat } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.5';

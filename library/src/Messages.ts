@@ -5,9 +5,8 @@ import {
 	DataChannelStats,
 	InboundAudioStats,
 	InboundVideoStats,
-	MessageSend,
-	MessageReceive,
-	OutBoundVideoStats
+	OutBoundVideoStats,
+	BaseMessage
 } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.5';
 
 export enum MessageSendTypes {
@@ -17,7 +16,8 @@ export enum MessageSendTypes {
 /**
  * Aggregated Stats Message Wrapper
  */
-export class MessageStats extends MessageSend.MessageSend {
+export class MessageStats implements BaseMessage {
+	type: string;
 	inboundVideoStats: InboundVideoStats;
 	inboundAudioStats: InboundAudioStats;
 	candidatePair: CandidatePairStats
@@ -30,7 +30,6 @@ export class MessageStats extends MessageSend.MessageSend {
 	 * @param aggregatedStats - Aggregated Stats 
 	 */
 	constructor(aggregatedStats: AggregatedStats) {
-		super();
 		this.type = MessageSendTypes.STATS
 		this.inboundVideoStats = aggregatedStats.inboundVideoStats;
 		this.inboundAudioStats = aggregatedStats.inboundAudioStats;

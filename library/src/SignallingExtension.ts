@@ -1,14 +1,14 @@
 import {
 	Logger,
-	MessageReceive,
-	MessageSend,
 	SignallingProtocol,
+	BaseMessage,
 } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.5';
 
 /**
  * Auth Request Message Wrapper
  */
-export class MessageAuthRequest extends MessageSend.MessageSend {
+export class MessageAuthRequest implements BaseMessage {
+	type: string;
 	token: string;
 	provider: string;
 
@@ -17,7 +17,6 @@ export class MessageAuthRequest extends MessageSend.MessageSend {
 	 * @param provider - Name of the provider that is registered in the auth plugin
 	 */
 	constructor(token: string, provider: string) {
-		super();
 		this.type = "authenticationRequest";
 		this.token = token;
 		this.provider = provider;
@@ -37,7 +36,8 @@ export enum InstanceState {
 /**
  * Instance State Message wrapper
  */
-export class MessageInstanceState extends MessageReceive.MessageRecv {
+export class MessageInstanceState implements BaseMessage {
+	type: string;
 	state: InstanceState;
 	details: string;
 	progress: number;
@@ -56,7 +56,8 @@ export enum MessageAuthResponseOutcomeType {
 /**
  * Authentication Response Message wrapper
  */
-export class MessageAuthResponse extends MessageReceive.MessageRecv {
+export class MessageAuthResponse implements BaseMessage {
+	type: string;
 	outcome: MessageAuthResponseOutcomeType;
 	redirect: string;
 	error: string;
@@ -65,13 +66,12 @@ export class MessageAuthResponse extends MessageReceive.MessageRecv {
 /**
  * Instance Request Message Wrapper
  */
-export class MessageRequestInstance extends MessageSend.MessageSend {
-
+export class MessageRequestInstance implements BaseMessage {
+	type: string;
 	// An opaque string representing optional configuration data to pass to the signalling server for instance customisation
 	data: string
 
 	constructor() {
-		super();
 		this.type = "requestInstance";
 	}
 }
@@ -95,7 +95,7 @@ export class SPSSignalling {
 	extendSignallingProtocol(signallingProtocol: SignallingProtocol) {
 
 		// authenticationRequired
-		signallingProtocol.messageHandlers.addListener("authenticationRequired", (msg: MessageReceive.MessageRecv) => {
+		signallingProtocol.messageHandlers.addListener("authenticationRequired", (msg: BaseMessage) => {
 			Logger.Log(Logger.GetStackTrace(), "AUTHENTICATION_REQUIRED", 6);
 			const url_string = window.location.href;
 			const url = new URL(url_string);
@@ -104,14 +104,14 @@ export class SPSSignalling {
 		});
 
 		// instanceState
-		signallingProtocol.messageHandlers.addListener("instanceState", (msg: MessageReceive.MessageRecv) => {
+		signallingProtocol.messageHandlers.addListener("instanceState", (msg: BaseMessage) => {
 			Logger.Log(Logger.GetStackTrace(), "INSTANCE_STATE", 6);
 			const instanceState: MessageInstanceState = msg as MessageInstanceState;
 			this.handleInstanceStateChanged(instanceState);
 		});
 
 		// authenticationResponse
-		signallingProtocol.messageHandlers.addListener("authenticationResponse", (msg: MessageReceive.MessageRecv) => {
+		signallingProtocol.messageHandlers.addListener("authenticationResponse", (msg: BaseMessage) => {
 			Logger.Log(Logger.GetStackTrace(), "AUTHENTICATION_RESPONSE", 6);
 
 			const authenticationResponse: MessageAuthResponse = msg as MessageAuthResponse;

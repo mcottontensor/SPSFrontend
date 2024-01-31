@@ -14,9 +14,9 @@
   "author": "TensorWorks Pty Ltd",
   "license": "MIT",
   "dependencies": {
-    "@epicgames-ps/lib-pixelstreamingcommon-ue5.5": "^0.0.4",
-    "@epicgames-ps/lib-pixelstreamingfrontend-ue5.5": "^0.0.5",
-    "@epicgames-ps/lib-pixelstreamingfrontend-ui-ue5.5": "^0.0.4"
+    "@epicgames-ps/lib-pixelstreamingcommon-ue5.5": "^0.0.8",
+    "@epicgames-ps/lib-pixelstreamingfrontend-ue5.5": "^0.0.8",
+    "@epicgames-ps/lib-pixelstreamingfrontend-ui-ue5.5": "^0.0.8"
   },
   "devDependencies": {
     "css-loader": "^6.7.3",
