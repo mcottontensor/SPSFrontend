@@ -95,7 +95,7 @@ export class SPSSignalling {
 	extendSignallingProtocol(signallingProtocol: SignallingProtocol) {
 
 		// authenticationRequired
-		signallingProtocol.messageHandlers.addListener("authenticationRequired", (msg: BaseMessage) => {
+		signallingProtocol.addListener("authenticationRequired", (msg: BaseMessage) => {
 			Logger.Log(Logger.GetStackTrace(), "AUTHENTICATION_REQUIRED", 6);
 			const url_string = window.location.href;
 			const url = new URL(url_string);
@@ -104,14 +104,14 @@ export class SPSSignalling {
 		});
 
 		// instanceState
-		signallingProtocol.messageHandlers.addListener("instanceState", (msg: BaseMessage) => {
+		signallingProtocol.addListener("instanceState", (msg: BaseMessage) => {
 			Logger.Log(Logger.GetStackTrace(), "INSTANCE_STATE", 6);
 			const instanceState: MessageInstanceState = msg as MessageInstanceState;
 			this.handleInstanceStateChanged(instanceState);
 		});
 
 		// authenticationResponse
-		signallingProtocol.messageHandlers.addListener("authenticationResponse", (msg: BaseMessage) => {
+		signallingProtocol.addListener("authenticationResponse", (msg: BaseMessage) => {
 			Logger.Log(Logger.GetStackTrace(), "AUTHENTICATION_RESPONSE", 6);
 
 			const authenticationResponse: MessageAuthResponse = msg as MessageAuthResponse;
